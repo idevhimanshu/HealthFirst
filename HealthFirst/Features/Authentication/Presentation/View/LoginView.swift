@@ -13,7 +13,7 @@ struct LoginView: View {
     @State private var password: String = ""
     @State private var isNavigateToSignupView: Bool = false
     @State private var isNavigateToForgotPasswordView: Bool = false
-    @State private var loginViewModel: LoginViewModel = LoginViewModel(loginUseCaseProtocol: LoginUseCase(loginRepository: LoginRepositoryImpl(networkManager: NetworkManger.shared)))
+    @State private var loginViewModel: LoginViewModel = LoginViewModel(loginUseCaseProtocol: LoginUseCase(loginRepository: LoginRepositoryImpl(networkManager: NetworkManger.shared, keychainManager: KeychainManager.shared)))
     
     var body: some View {
         

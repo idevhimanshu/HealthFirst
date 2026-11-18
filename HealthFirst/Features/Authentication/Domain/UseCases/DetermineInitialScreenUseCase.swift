@@ -11,8 +11,18 @@ protocol DetermineInitialScreenUseCaseProtocol {
 }
 
 final class DetermineInitialScreenUseCase: DetermineInitialScreenUseCaseProtocol {
+    private let keychainManger: KeychainManager
+    
+    init(keychainManger: KeychainManager) {
+        self.keychainManger = keychainManger
+    }
+    
     func execute() async -> AppLaunchState {
-        return AppLaunchState.login
+        if keychainManger.hasToken() {
+            return AppLaunchState.home
+        } else {
+            return AppLaunchState.login
+        }
     }
     
     

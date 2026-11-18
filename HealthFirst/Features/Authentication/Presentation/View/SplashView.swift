@@ -9,8 +9,8 @@ import SwiftUI
 
 struct SplashView: View {
     
-    @State public var splashViewModel: SplashViewModel = SplashViewModel(determineInitialScreenUseCase: DetermineInitialScreenUseCase())
-    @State public var isNavigateToLoginView: Bool = false
+    @State public var splashViewModel: SplashViewModel = SplashViewModel(determineInitialScreenUseCase: DetermineInitialScreenUseCase(keychainManger: KeychainManager.shared))
+    
     
     var body: some View {
         VStack {
@@ -30,15 +30,21 @@ struct SplashView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
         .background(Color("_2260FF"))
         .task {
-            await splashViewModel.start()
+            do {
+                try await Task.sleep(for: .seconds(2))
+                await splashViewModel.start()
+            } catch {
+                return
+            }
         }
-        .onAppear{
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
-                isNavigateToLoginView.toggle()
-            })
+        
+            
+        .navigationDestination(isPresented: $splashViewModel.isNavigateToLoginScreen) {
+                LoginView()
         }
-        .navigationDestination(isPresented: $isNavigateToLoginView) {
-            LoginView()
+        
+        .navigationDestination(isPresented: $splashViewModel.isNavigateToHomeScreen) {
+                CustomTabBarView()
         }
     }
 }

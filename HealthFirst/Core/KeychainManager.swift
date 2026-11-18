@@ -13,12 +13,23 @@ class KeychainManager {
     static let shared = KeychainManager()
     
     private let keychain = KeychainSwift()
+    
     private init() {
         
     }
     
+   
+    
      func savetoken(token: String){
         keychain.set(token, forKey: "token")
+    }
+    
+    func hasToken() -> Bool {
+        if let token = getToken(), !token.isEmpty {
+            return true
+        } else {
+            return false
+        }
     }
     
     func getToken() -> String? {
