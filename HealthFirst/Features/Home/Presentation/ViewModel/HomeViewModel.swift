@@ -14,6 +14,7 @@ final class HomeViewModel {
     var isLoading: Bool = false
     var alertMessage: String = ""
     var isShowAlert = false
+    var doctorList: [Doctor] = []
     
     
     init(homeUseCasesProtocol: HomeUseCasesProtocol) {
@@ -21,37 +22,45 @@ final class HomeViewModel {
     }
     
     func getDoctorList() async {
+        isLoading = true
+        defer {
+            isLoading = false
+        }
         do {
-            let doctorList = try await homeUseCasesProtocol.getDoctorList(endpoints: HomeEndpoints.getDoctorList)
-            print(doctorList)
+             doctorList = try await homeUseCasesProtocol.getDoctorList(endpoints: HomeEndpoints.getDoctorList)
+           
         } catch let error as NetworkError {
             switch error {
             case .invalidUrl:
-                alertMessage = error.localizedDescription
+                alertMessage = error.errorDescription
                 isShowAlert.toggle()
             case .noInternet:
-                alertMessage = error.localizedDescription
+                alertMessage = error.errorDescription
                 isShowAlert.toggle()
             case .unauthorized:
-                alertMessage = error.localizedDescription
+                alertMessage = error.errorDescription
                 isShowAlert.toggle()
             case .serverError(_, let messsage):
                 alertMessage = messsage
                 isShowAlert.toggle()
             case .decodingError:
-                alertMessage = error.localizedDescription
+                alertMessage = error.errorDescription
                 isShowAlert.toggle()
             case .requestFaild(_):
-                alertMessage = error.localizedDescription
+                alertMessage = error.errorDescription
                 isShowAlert.toggle()
             case .unknown:
-                alertMessage = error.localizedDescription
+                alertMessage = error.errorDescription
                 isShowAlert.toggle()
             }
         } catch {
             alertMessage = error.localizedDescription
             isShowAlert.toggle()
         }
+    }
+    
+    func getUserDetails() {
+        
     }
 
 }

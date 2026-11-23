@@ -7,5 +7,5 @@
 
 import Foundation
 protocol HomeRepositoryProtocol {
-    func getDoctorList(endpoints: APIEndpoints) async throws -> [DoctorList]
+    func getDoctorList(endpoints: APIEndpoints) async throws -> [Doctor]
 }

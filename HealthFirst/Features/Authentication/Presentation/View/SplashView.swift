@@ -35,23 +35,14 @@ struct SplashView: View {
                 try await Task.sleep(for: .seconds(2))
                 await splashViewModel.start()
                 if splashViewModel.isNavigateToHomeScreen {
-                    navigationViewModel.goNextScreen(screen: .customTabBar)
+                    navigationViewModel.setRoot(screen: .tabBar)
                 } else {
-                    navigationViewModel.goNextScreen(screen: .loginScreen)
+                    navigationViewModel.setRoot(screen: .login)
                 }
             } catch {
                 return
             }
         }
-        
-            
-//        .navigationDestination(isPresented: $splashViewModel.isNavigateToLoginScreen) {
-//                LoginView()
-//        }
-//        
-//        .navigationDestination(isPresented: $splashViewModel.isNavigateToHomeScreen) {
-//                CustomTabBarView()
-//        }
     }
 }
 

@@ -35,6 +35,9 @@ struct AllAppointmentView: View {
             }
         }
         .padding(16)
+        onAppear(perform: {
+            KeychainManager.shared.deleteAll()
+        })
         .navigationDestination(isPresented: $allApointmentViewModel.isNavigateToReviewScreen) {
             ReviewScreen()
         }

@@ -9,11 +9,12 @@ import SwiftUI
 
 struct LoginView: View {
     
-    @State private var email: String = ""
-    @State private var password: String = ""
+    @State private var email: String = "Vivektrivedi@gmail.com"
+    @State private var password: String = "Vivek@123"
     @State private var isNavigateToSignupView: Bool = false
     @State private var isNavigateToForgotPasswordView: Bool = false
     @State private var loginViewModel: LoginViewModel = LoginViewModel(loginUseCaseProtocol: LoginUseCase(loginRepository: LoginRepositoryImpl(networkManager: NetworkManger.shared, keychainManager: KeychainManager.shared)))
+    @Environment(NavigationViewModel.self) private var navigationViewModel
     
     var body: some View {
         
@@ -66,7 +67,10 @@ struct LoginView: View {
                     
                     Button {
                         Task {
-                            await loginViewModel.login(email: email, password: password)
+                           let isLoginSuccess = await loginViewModel.login(email: email, password: password)
+                            if isLoginSuccess {
+                                navigationViewModel.goNextScreen(screen: .customTabBar)
+                            }
                           
                         }
                     } label: {
@@ -145,9 +149,9 @@ struct LoginView: View {
         .navigationDestination(isPresented: $isNavigateToForgotPasswordView) {
             ForgotPasswordView()
         }
-        .navigationDestination(isPresented: $loginViewModel.isNavigateToHomeView, destination: {
-            CustomTabBarView()
-        })
+//        .navigationDestination(isPresented: $loginViewModel.isNavigateToHomeView, destination: {
+//            CustomTabBarView()
+//        })
         .alert(isPresented: $loginViewModel.isShowAlert) {
             Alert(title: Text(loginViewModel.alertTitle), message: Text(loginViewModel.alertMessage), dismissButton: .cancel(Text("Ok")))
         }

@@ -22,14 +22,14 @@ final class LoginViewModel {
         self.loginUseCaseProtocol = loginUseCaseProtocol
     }
     
-    func login(email: String, password: String) async {
+    func login(email: String, password: String) async -> Bool {
         isLoading = true
         defer {
             isLoading = false
         }
         do {
             let user = try await loginUseCaseProtocol.login(endpoints: AuthApi.login(email: email, password: password))
-            isNavigateToHomeView = true
+            return true
         } catch let error as NetworkError {
             switch error {
             case .invalidUrl:
@@ -60,6 +60,7 @@ final class LoginViewModel {
             isShowAlert.toggle()
             print(error.localizedDescription)
         }
+        return false
     }
     
 //    func loginValidation(_ email: String, _ password: String) -> Bool {

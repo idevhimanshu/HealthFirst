@@ -179,7 +179,7 @@ struct HomeView: View {
                         .background(Color("_CAD6FF"))
                     
                     VStack {
-                        ForEach(0..<5) { _ in
+                        ForEach(homeViewModel.doctorList, id: \.id) { doctor in
                             
                             
                             HStack(alignment: .top) {
@@ -192,10 +192,10 @@ struct HomeView: View {
                                 VStack {
                                     HStack {
                                         VStack(alignment: .leading, spacing: 5) {
-                                            Text("Dr. Olivia Turner, M.D.")
+                                            Text("Dr. \(doctor.name)")
                                                 .font(.custom("LeagueSpartan-Medium", size: 14))
                                                 .foregroundColor(Color("_2260FF"))
-                                            Text("Dermato-Endocrinology")
+                                            Text(doctor.specializaiton)
                                                 .font(.custom("LeagueSpartan-Light", size: 12))
                                             
                                             
@@ -214,7 +214,7 @@ struct HomeView: View {
                                                 .resizable()
                                                 .frame(width: 16, height: 16)
                                             HStack {
-                                                Text("5")
+                                                Text("\(doctor.rating)")
                                                     .font(.custom("LeagueSpartan-Light", size: 16))
                                             }
                                             .padding(.top, 3)
@@ -231,7 +231,7 @@ struct HomeView: View {
                                                 .resizable()
                                                 .frame(width: 16, height: 16)
                                             HStack {
-                                                Text("60")
+                                                Text("\(doctor.commentCount)")
                                                     .font(.custom("LeagueSpartan-Light", size: 16))
                                             }
                                             .padding(.top, 3)
@@ -278,8 +278,12 @@ struct HomeView: View {
                 }
             }
         }
+//        .onAppear(perform: {
+//            KeychainManager.shared.deleteAll()
+//        })
         .task{
             await homeViewModel.getDoctorList()
+            
         }
         .alert(isPresented: $homeViewModel.isShowAlert) {
             Alert(title: Text(homeViewModel.alertMessage), message: Text(homeViewModel.alertMessage), dismissButton: .cancel(Text("Ok")))

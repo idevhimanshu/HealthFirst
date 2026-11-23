@@ -8,7 +8,7 @@
 import Foundation
 
 protocol HomeUseCasesProtocol {
-    func getDoctorList(endpoints: APIEndpoints) async throws -> [DoctorList]
+    func getDoctorList(endpoints: APIEndpoints) async throws -> [Doctor]
 }
 
 class HomeUseCases: HomeUseCasesProtocol {
@@ -19,7 +19,7 @@ class HomeUseCases: HomeUseCasesProtocol {
         self.homeRepository = homeRepository
     }
     
-    func getDoctorList(endpoints: APIEndpoints) async throws -> [DoctorList] {
+    func getDoctorList(endpoints: APIEndpoints) async throws -> [Doctor] {
        return try await homeRepository.getDoctorList(endpoints: endpoints)
     }
 }

@@ -15,8 +15,8 @@ class HomeRepositoryImpl: HomeRepositoryProtocol {
         self.networkManager = networkManager
     }
     
-    func getDoctorList(endpoints: APIEndpoints) async throws -> [DoctorList] {
-        let response: Result<[DoctorList], NetworkError> = await networkManager.sendRequest(endpoint: endpoints.path)
+    func getDoctorList(endpoints: APIEndpoints) async throws -> [Doctor] {
+        let response: Result<[Doctor], NetworkError> = await networkManager.sendRequest(endpoint: endpoints.path)
         switch response {
         case .success(let doctorList):
             return doctorList

@@ -105,7 +105,7 @@ struct ProfileView: View {
                         isShowActionSheet = false
                         Task {
                             if await settingViewModel.logout(){
-                                navigationViewModel.removeAll()
+                            navigationViewModel.setRoot(screen: .login)
                             } else {
                                 
                             }
