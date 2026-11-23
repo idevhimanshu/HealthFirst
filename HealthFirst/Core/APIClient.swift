@@ -30,16 +30,25 @@ final class NetworkManger {
     private init() {
         let configuration = URLSessionConfiguration.default
         configuration.timeoutIntervalForRequest = 30
-        self.session = Session(configuration: configuration)
+        let interceptor = JWTInterceptor()
+        self.session = Session(configuration: configuration, interceptor: interceptor)
     }
     
-    func sendRequest<T: Decodable>(endpoint: String, parameter: Parameters? = nil, method: HTTPMethod = .get, headers: HTTPHeaders? = nil) async -> Result<T,NetworkError>{
+    func sendRequest<T: Decodable>(endpoint: String, parameter: Parameters? = nil, method: HTTPMethod = .get, headers: HTTPHeaders? = nil, requiresAuth: Bool = true) async -> Result<T,NetworkError>{
         
         let url = baseUrl + endpoint
         let encoding: ParameterEncoding = method == .get ? URLEncoding.default : JSONEncoding.default
+        var finalHeaders = headers ?? HTTPHeaders()
+        if requiresAuth {
+                    finalHeaders.add(name: "Requires-Auth", value: "true")
+                }
         
         do {
-            let response = await session.request(url, method: method, parameters: parameter, encoding:  encoding, headers:  headers)
+            
+            let request =  session.request(url, method: method, parameters: parameter, encoding:  encoding, headers:  finalHeaders )
+            print(request)
+            
+            let response = await request
                 .validate(statusCode: 200..<300)
                 .serializingDecodable(APIResponse<T>.self)
                 .response
@@ -83,33 +92,4 @@ final class NetworkManger {
             return .success(data)
         }
     }
-    
-    
-//    func sendRequest<T: Decodable>(url: String, parameter: [String: Any], method: HTTPMethod) async -> APIResponse<T> {
-//        let encoder: ParameterEncoding = (method == .get) ? URLEncoding.default : JSONEncoding.default
-//        let dataTask = AF.request(url, method: method, parameters: parameter,encoding: encoder, interceptor: .retryPolicy)
-//        print(dataTask)
-//        let response = await dataTask.serializingDecodable(APIResponse<T>.self).response
-//        print(response)
-//        
-//        if let error = response.error {
-//            print(error.localizedDescription)
-//        }
-//        
-//        if let statusCode = response.response?.statusCode, statusCode > 300 {
-//            print("Server error with satatus code: \(statusCode)")
-//        }
-//        
-//        guard let data = response.value else {
-//            print("unable to decode data")
-//            return APIResponse(status: false, message: "Something went wrong", data: nil)
-//            
-//        }
-//        
-//        return data
-//       
-//    }
-//    
-    
-
 }

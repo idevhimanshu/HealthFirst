@@ -10,6 +10,7 @@ import SwiftUI
 struct HomeView: View {
     
     @State private var searchText: String = ""
+    @State private var homeViewModel: HomeViewModel = HomeViewModel(homeUseCasesProtocol: HomeUseCases(homeRepository: HomeRepositoryImpl(networkManager: NetworkManger.shared)))
     
     var body: some View {
         VStack {
@@ -276,6 +277,12 @@ struct HomeView: View {
                     .padding(.horizontal, 16)
                 }
             }
+        }
+        .task{
+            await homeViewModel.getDoctorList()
+        }
+        .alert(isPresented: $homeViewModel.isShowAlert) {
+            Alert(title: Text(homeViewModel.alertMessage), message: Text(homeViewModel.alertMessage), dismissButton: .cancel(Text("Ok")))
         }
         
     }

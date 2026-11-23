@@ -6,3 +6,6 @@
 //
 
 import Foundation
+protocol HomeRepositoryProtocol {
+    func getDoctorList(endpoints: APIEndpoints) async throws -> [DoctorList]
+}
