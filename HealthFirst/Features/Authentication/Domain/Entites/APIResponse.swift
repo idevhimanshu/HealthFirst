@@ -16,4 +16,10 @@ nonisolated struct APIResponse<T: Decodable & Sendable>: Decodable, Sendable {
     let status: Bool
     let message: String
     let data: T?
+    
+    private enum CodingKeys: String, CodingKey {
+        case status = "status"
+        case message = "message"
+        case data = "data"
+    }
 }

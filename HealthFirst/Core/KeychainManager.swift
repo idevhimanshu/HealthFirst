@@ -20,25 +20,30 @@ class KeychainManager {
     
    
     
-     func savetoken(token: String){
-        keychain.set(token, forKey: "token")
+     func saveAccessToken(token: String){
+        keychain.set(token, forKey: "access_token")
     }
     
+    func saveRefreshToken(token: String){
+       keychain.set(token, forKey: "refresh_token")
+   }
+    
     func hasToken() -> Bool {
-        if let token = getToken(), !token.isEmpty {
+        if let token = getAccessToken(), !token.isEmpty {
             return true
         } else {
             return false
         }
     }
     
-    func getToken() -> String? {
-        keychain.get("token")
+    func getAccessToken() -> String? {
+        keychain.get("access_token")
     }
     
-    func deleteToken() {
-        keychain.delete("token")
+    func getRefreshToken() -> String? {
+        keychain.get("refresh_token")
     }
+    
     
     func deleteAll() {
         keychain.clear()

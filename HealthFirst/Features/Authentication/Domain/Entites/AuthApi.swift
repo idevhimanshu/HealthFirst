@@ -15,7 +15,7 @@ enum AuthApi: APIEndpoints {
     var path: String {
         switch self {
         case .login:
-            return "api/auth/login"
+            return "api/auth/patient/login"
         }
         
     }

@@ -24,7 +24,8 @@ class LoginRepositoryImpl : LoginRepositoryProtocol {
         
         switch result {
         case .success(let apiResponse):
-            keychainManager.savetoken(token: apiResponse.token)
+            keychainManager.saveAccessToken(token: apiResponse.accessToken)
+            keychainManager.saveRefreshToken(token: apiResponse.refreshToken)
             return apiResponse
         case .failure(let failure):
             throw failure

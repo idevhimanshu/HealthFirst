@@ -68,13 +68,20 @@ final class NetworkManger {
                 return .failure(.requestFaild(error.localizedDescription))
             }
             
-            guard let data = response.value?.data else {
+            guard let data = response.value else {
+                return .failure(.unknown)
+            }
+            
+            if T.self == Logout.self {
+                return .success(Logout() as! T)
+            }
+            
+            guard let data = data.data else {
                 return .failure(.unknown)
             }
             
             return .success(data)
         }
-        
     }
     
     

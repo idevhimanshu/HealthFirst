@@ -10,6 +10,7 @@ import SwiftUI
 struct SplashView: View {
     
     @State public var splashViewModel: SplashViewModel = SplashViewModel(determineInitialScreenUseCase: DetermineInitialScreenUseCase(keychainManger: KeychainManager.shared))
+    @Environment(NavigationViewModel.self) private var navigationViewModel
     
     
     var body: some View {
@@ -33,19 +34,24 @@ struct SplashView: View {
             do {
                 try await Task.sleep(for: .seconds(2))
                 await splashViewModel.start()
+                if splashViewModel.isNavigateToHomeScreen {
+                    navigationViewModel.goNextScreen(screen: .customTabBar)
+                } else {
+                    navigationViewModel.goNextScreen(screen: .loginScreen)
+                }
             } catch {
                 return
             }
         }
         
             
-        .navigationDestination(isPresented: $splashViewModel.isNavigateToLoginScreen) {
-                LoginView()
-        }
-        
-        .navigationDestination(isPresented: $splashViewModel.isNavigateToHomeScreen) {
-                CustomTabBarView()
-        }
+//        .navigationDestination(isPresented: $splashViewModel.isNavigateToLoginScreen) {
+//                LoginView()
+//        }
+//        
+//        .navigationDestination(isPresented: $splashViewModel.isNavigateToHomeScreen) {
+//                CustomTabBarView()
+//        }
     }
 }
 
