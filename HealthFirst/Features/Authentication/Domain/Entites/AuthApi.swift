@@ -10,6 +10,7 @@ import Alamofire
 
 enum AuthApi: APIEndpoints {
     
+    
     case login(email: String, password: String)
     
     var path: String {
@@ -44,6 +45,13 @@ enum AuthApi: APIEndpoints {
                 "Content-Type": "application/json",
                 "Accept": "application/json"
             ]
+        }
+    }
+    
+    var file: MultipartFile? {
+        switch self {
+        case .login(let email, let password):
+            return nil
         }
     }
     

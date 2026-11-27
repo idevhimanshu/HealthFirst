@@ -15,6 +15,7 @@ final class HomeViewModel {
     var alertMessage: String = ""
     var isShowAlert = false
     var doctorList: [Doctor] = []
+    var userDetails: UserDetails? = nil
     
     
     init(homeUseCasesProtocol: HomeUseCasesProtocol) {
@@ -59,8 +60,74 @@ final class HomeViewModel {
         }
     }
     
-    func getUserDetails() {
-        
+    func getUserDetails() async {
+        do {
+           userDetails = try await homeUseCasesProtocol.getUserDetails(endpoints: HomeEndpoints.getUserDetails)
+        } catch let error as NetworkError {
+            switch error {
+            case .invalidUrl:
+                alertMessage = error.errorDescription
+                isShowAlert.toggle()
+            case .noInternet:
+                alertMessage = error.errorDescription
+                isShowAlert.toggle()
+            case .unauthorized:
+                alertMessage = error.errorDescription
+                isShowAlert.toggle()
+            case .serverError(_, let messsage):
+                alertMessage = messsage
+                isShowAlert.toggle()
+            case .decodingError:
+                alertMessage = error.errorDescription
+                isShowAlert.toggle()
+            case .requestFaild(_):
+                alertMessage = error.errorDescription
+                isShowAlert.toggle()
+            case .unknown:
+                alertMessage = error.errorDescription
+                isShowAlert.toggle()
+            }
+        } catch {
+            alertMessage = error.localizedDescription
+            isShowAlert.toggle()
+        }
+    }
+    
+    func searchDoctors(specialization: String) async {
+        isLoading = true
+        defer {
+            isLoading = false
+        }
+        do {
+            doctorList = try await homeUseCasesProtocol.searchDoctors(endpoints: HomeEndpoints.searchDoctors(specializaiton: specialization))
+        } catch let error as NetworkError {
+            switch error {
+            case .invalidUrl:
+                alertMessage = error.errorDescription
+                isShowAlert.toggle()
+            case .noInternet:
+                alertMessage = error.errorDescription
+                isShowAlert.toggle()
+            case .unauthorized:
+                alertMessage = error.errorDescription
+                isShowAlert.toggle()
+            case .serverError(_, let messsage):
+                alertMessage = messsage
+                isShowAlert.toggle()
+            case .decodingError:
+                alertMessage = error.errorDescription
+                isShowAlert.toggle()
+            case .requestFaild(_):
+                alertMessage = error.errorDescription
+                isShowAlert.toggle()
+            case .unknown:
+                alertMessage = error.errorDescription
+                isShowAlert.toggle()
+            }
+        } catch {
+            alertMessage = error.localizedDescription
+            isShowAlert.toggle()
+        }
     }
 
 }

@@ -9,16 +9,24 @@ import SwiftUI
 
 struct ProfileImageView: View {
     
-    
+    var selectedImage: UIImage? = nil
+    var editButtonAction: () -> Void
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
-            Image("ProfilePhoto")
-                .resizable()
-                .frame(width: 110, height: 110)
-                .cornerRadius(55)
+            if let selectedImage = selectedImage {
+                Image(uiImage: selectedImage)
+                    .resizable()
+                    .frame(width: 110, height: 110)
+                    .cornerRadius(55)
+            } else {
+                Image("ProfilePhoto")
+                    .resizable()
+                    .frame(width: 110, height: 110)
+                    .cornerRadius(55)
+            }
             
             Button(action: {
-                    print("Edit profile photo tapped")
+                   editButtonAction()
                 }) {
                     Circle()
                         .frame(width: 28, height: 28)
@@ -38,5 +46,7 @@ struct ProfileImageView: View {
 }
 
 #Preview {
-    ProfileImageView()
+    ProfileImageView(editButtonAction: {
+        
+    })
 }

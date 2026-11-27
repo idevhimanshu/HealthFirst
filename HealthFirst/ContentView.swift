@@ -26,6 +26,8 @@ struct ContentView: View {
                         CustomTabBarView()
                     case .loginScreen:
                         LoginView()
+                    case .editProfileView:
+                        EditProfileView()
                     }
                 }
         }
@@ -57,12 +59,14 @@ struct MainView: View {
 enum Route: Hashable {
     case customTabBar
     case loginScreen
+    case editProfileView
 }
 
 enum RootView {
     case login
     case tabBar
     case splash
+    
 }
 
 @Observable

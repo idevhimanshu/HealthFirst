@@ -11,11 +11,17 @@ import Alamofire
 enum HomeEndpoints: APIEndpoints {
     
     case getDoctorList
+    case getUserDetails
+    case searchDoctors(specializaiton: String)
     
     var path: String {
         switch self {
         case .getDoctorList:
             return "api/doctor/doctors"
+        case .getUserDetails:
+            return "api/profile"
+        case .searchDoctors(_):
+            return "api/doctor/search"
         }
     }
     
@@ -23,23 +29,47 @@ enum HomeEndpoints: APIEndpoints {
         switch self {
         case .getDoctorList:
             return .get
+        case .getUserDetails:
+            return .get
+        case .searchDoctors(_):
+            return .get
         }
     }
     
-    var parameter: Alamofire.Parameters? {
+    var parameter: Parameters? {
         switch self {
         case .getDoctorList:
             return nil
+        case .getUserDetails:
+            return nil
+        case .searchDoctors(let specializaiton):
+            return [
+               "specializaiton": specializaiton
+           ]
         }
     }
     
-    var header: Alamofire.HTTPHeaders? {
+    var header: HTTPHeaders? {
         switch self {
         case .getDoctorList:
             return nil
+        case .getUserDetails:
+            return nil
+        case .searchDoctors(_):
+            return nil
+             
         }
     }
     
-    
+    var file: MultipartFile? {
+        switch self {
+        case .getDoctorList:
+            return nil
+        case .getUserDetails:
+            return nil
+        case .searchDoctors(let specializaiton):
+            return nil
+        }
+    }
     
 }

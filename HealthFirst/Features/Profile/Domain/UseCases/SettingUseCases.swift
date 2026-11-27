@@ -9,6 +9,7 @@ import Foundation
 
 protocol SettingUseCasesProtocol {
     func logout() async throws -> Bool
+    func changeImage(data: Data, file: MultipartFile) async throws -> Bool
 }
 
 final class SettingUseCases: SettingUseCasesProtocol {
@@ -25,6 +26,10 @@ final class SettingUseCases: SettingUseCasesProtocol {
         return try await settingRepository.logout(endpoint: SettingEndpoints.logout(refreshToken: keychainManager.getRefreshToken() ?? ""))
     }
     
+    func changeImage(data: Data, file: MultipartFile) async throws -> Bool {
+        return try await settingRepository.changedProfileImage(endpoint: SettingEndpoints.changeProfileImage(data: data, file: file))
+        
+    }
     
     
 }

@@ -6,6 +6,11 @@
 //
 
 import SwiftUI
+enum ActivePicker: Identifiable {
+    case camera, gallery
+    var id: Self { self }
+}
+
 
 struct EditProfileView: View {
     
@@ -15,24 +20,36 @@ struct EditProfileView: View {
     @State private var dateOfBirth: String = ""
     @State private var isNavigateToSettingView: Bool = false
     
+    @State private var isShowPhotoPickerSheet: Bool = false
+    @State private var selectedImage: UIImage?
+    @State private var activePicker: ActivePicker?
+    @State private var settingViewModel: SettingViewModel = SettingViewModel(settingUseCases: SettingUseCases(settingRepository: SettingRepositoryImpl(keychainManager: KeychainManager.shared, networkManager: NetworkManger.shared), keychainManager: KeychainManager.shared))
+    
     var body: some View {
         VStack(spacing: 16) {
-            ProfileImageView()
-                .padding(.bottom, 20)
+            ProfileImageView(selectedImage: selectedImage, editButtonAction: {
+                isShowPhotoPickerSheet = true
+            })
+            .padding(.bottom, 20)
+            
             CustomTextField(textFieldTitle: "Full Name", text: $name)
             CustomTextField(textFieldTitle: "Phone number", text: $mobileNumber)
             CustomTextField(textFieldTitle: "Email", text: $email)
             CustomTextField(textFieldTitle: "Date of birth", text: $dateOfBirth)
+            
             Spacer()
+            
             CustomButton {
-                
+                if let selectedImage = selectedImage {
+                    Task {
+                     await settingViewModel.changeProfile(image: selectedImage)
+                    }
+                }
             }
+            
             Spacer()
         }
         .padding(.horizontal, 16)
-        .navigationDestination(isPresented: $isNavigateToSettingView, destination: {
-            SettingView()
-        })
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button(action: {
@@ -42,10 +59,48 @@ struct EditProfileView: View {
                 }
             }
         }
-        
-
+        // 1. Clean Bottom Sheet (Native iOS Look)
+        .sheet(isPresented: $isShowPhotoPickerSheet) {
+            NavigationStack {
+                List {
+                    Button {
+                        isShowPhotoPickerSheet = false
+                        activePicker = .camera
+                    } label: {
+                        Label("Camera", systemImage: "camera")
+                    }
+                    
+                    Button {
+                        isShowPhotoPickerSheet = false
+                        activePicker = .gallery
+                    } label: {
+                        Label("Gallery", systemImage: "photo.on.rectangle")
+                    }
+                }
+                .navigationTitle("Select any one")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button("Cancel") {
+                            isShowPhotoPickerSheet = false
+                        }
+                    }
+                }
+            }
+            .presentationDetents([.height(210)]) // Hamesha bottom mein khulega
+            .presentationDragIndicator(.visible)
+        }
+        // 2. Camera / Gallery Sheet (Bina kisi delay ke)
+        .sheet(item: $activePicker) { picker in
+            ImagePicker(
+                selectedImage: $selectedImage,
+                sourceType: picker == .camera ? .camera : .photoLibrary
+            )
+            .ignoresSafeArea()
+        }
     }
 }
+
 
 #Preview {
     EditProfileView()
@@ -57,7 +112,7 @@ struct CustomButton: View {
     
     var body: some View {
         Button {
-            
+            action()
         } label: {
             VStack {
                 Text("Update Profile")

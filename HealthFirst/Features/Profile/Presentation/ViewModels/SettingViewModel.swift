@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 @Observable
 final class SettingViewModel {
@@ -16,6 +17,7 @@ final class SettingViewModel {
     var isShowAlert: Bool = false
     var isLoading: Bool = false
     var isNavigateToLoginScreen: Bool = false
+    var selectedImage: UIImage? = nil
     
     init(settingUseCases: SettingUseCases) {
         self.settingUseCases = settingUseCases
@@ -28,9 +30,9 @@ final class SettingViewModel {
         }
         do {
             return try  await settingUseCases.logout()
-//            if isLogout {
-//                isNavigateToLoginScreen = true
-//            }
+            //            if isLogout {
+            //                isNavigateToLoginScreen = true
+            //            }
         } catch let error as NetworkError {
             switch error {
             case .invalidUrl:
@@ -42,13 +44,13 @@ final class SettingViewModel {
             case .unauthorized:
                 alertMessage = error.localizedDescription
                 isShowAlert.toggle()
-            case .serverError(let statusCode, let messsage):
+            case .serverError(_, let messsage):
                 alertMessage = messsage
                 isShowAlert.toggle()
             case .decodingError:
                 alertMessage = error.localizedDescription
                 isShowAlert.toggle()
-            case .requestFaild(let string):
+            case .requestFaild(_):
                 alertMessage = error.localizedDescription
                 isShowAlert.toggle()
             case .unknown:
@@ -63,4 +65,52 @@ final class SettingViewModel {
         return false
     }
     
+    func changeProfile(image: UIImage) async {
+        do {
+            let imageData = try imageToData(image: image)
+            let avatarFile = MultipartFile(
+                data: imageData,
+                fieldName: "file",
+                fileName: "profile.jpg",
+                mimeType: "image/jpeg"
+            )
+            _ = try await settingUseCases.changeImage(data: imageData, file: avatarFile)
+        } catch let error as NetworkError {
+            switch error {
+            case .invalidUrl:
+                alertMessage = error.localizedDescription
+                isShowAlert.toggle()
+            case .noInternet:
+                alertMessage = error.localizedDescription
+                isShowAlert.toggle()
+            case .unauthorized:
+                alertMessage = error.localizedDescription
+                isShowAlert.toggle()
+            case .serverError(_, let messsage):
+                alertMessage = messsage
+                isShowAlert.toggle()
+            case .decodingError:
+                alertMessage = error.localizedDescription
+                isShowAlert.toggle()
+            case .requestFaild(_):
+                alertMessage = error.localizedDescription
+                isShowAlert.toggle()
+            case .unknown:
+                alertMessage = error.localizedDescription
+                isShowAlert.toggle()
+            }
+        } catch {
+            alertMessage = error.localizedDescription
+            isShowAlert.toggle()
+            print(error.localizedDescription)
+        }
+    }
+    
+    
+    func imageToData(image: UIImage) throws -> Data {
+        guard let imageData = image.jpegData(compressionQuality: 0.8) else {
+            throw NetworkError.invalidUrl
+        }
+        return imageData
+    }
 }

@@ -6,8 +6,10 @@
 //
 
 import Foundation
+import Alamofire
 
 class HomeRepositoryImpl: HomeRepositoryProtocol {
+    
     
     private let networkManager: NetworkManger
     
@@ -24,6 +26,26 @@ class HomeRepositoryImpl: HomeRepositoryProtocol {
             throw error
         }
         
+    }
+    
+    func getUserDetail(endPoints: APIEndpoints) async throws -> UserDetails {
+        let response: Result<UserDetails, NetworkError> = await networkManager.sendRequest(endpoint: endPoints.path)
+        switch response {
+        case .success(let userDetails):
+            return userDetails
+        case .failure(let failure):
+            throw failure
+        }
+    }
+    
+    func searchDoctors(endpoints: APIEndpoints) async throws -> [Doctor] {
+        let response: Result<[Doctor], NetworkError> = await networkManager.sendRequest(endpoint: endpoints.path, parameter: endpoints.parameter, method: .get)
+        switch response {
+        case .success(let doctorsList):
+            return doctorsList
+        case .failure(let failure):
+            throw failure
+        }
     }
     
     

@@ -6,11 +6,17 @@
 //
 
 import SwiftUI
+import PhotosUI
 
 struct MenuItem: Identifiable {
     let id = UUID()
     let title: String
     let iconName: String
+//    let action: () -> Void
+}
+
+protocol changeProfileImage {
+    func changeProfileImage() -> UIImage
 }
 
 struct ProfileView: View {
@@ -18,16 +24,16 @@ struct ProfileView: View {
     @State private var buttonName: [MenuItem] = [MenuItem(title: "Profile", iconName: "profile_icon"), MenuItem(title: "Favorite", iconName: "favorite_icon"), MenuItem(title: "Payment Method", iconName: "wallet_icon"), MenuItem(title: "Privacy Policy", iconName: "lock_icon"), MenuItem(title: "Settings", iconName: "setting_icon"), MenuItem(title: "Help", iconName: "help_icon"), MenuItem(title: "Logout", iconName: "logout_icon")]
     
     @State private var isShowActionSheet: Bool = false
-    @State private var settingViewModel: SettingViewModel = SettingViewModel(settingUseCases: SettingUseCases(settingRepository: SettingRepositoryImpl(keychainManager: KeychainManager.shared, networkManager: NetworkManger.shared), keychainManager: KeychainManager.shared))
     
+    @State private var settingViewModel: SettingViewModel = SettingViewModel(settingUseCases: SettingUseCases(settingRepository: SettingRepositoryImpl(keychainManager: KeychainManager.shared, networkManager: NetworkManger.shared), keychainManager: KeychainManager.shared))
     @State private var isNavigateToEditProfileView: Bool = false
     @Environment(NavigationViewModel.self) private var navigationViewModel
-
+    
     var body: some View {
         ZStack {
             VStack {
                 
-                ProfileImageView()
+                ProfileImageView(){ }
                 
                 Text("John Doe")
                     .font(.custom("LeagueSpartan-SemiBold", size: 24))
@@ -60,7 +66,8 @@ struct ProfileView: View {
                                 .frame(width: 12, height: 12)
                         }
                         .onTapGesture {
-                            isShowActionSheet.toggle()
+//                            isShowActionSheet.toggle()
+                            navigationViewModel.goNextScreen(screen: .editProfileView)
                         }
                     }
                 }
@@ -105,7 +112,7 @@ struct ProfileView: View {
                         isShowActionSheet = false
                         Task {
                             if await settingViewModel.logout(){
-                            navigationViewModel.setRoot(screen: .login)
+                                navigationViewModel.setRoot(screen: .login)
                             } else {
                                 
                             }
@@ -127,7 +134,7 @@ struct ProfileView: View {
                             }
                         }
                     }
-
+                    
                     
                 }
                 
@@ -137,6 +144,10 @@ struct ProfileView: View {
             .presentationDragIndicator(.hidden)
             
         }
+
+        
+        
+        
         .alert(isPresented: $settingViewModel.isShowAlert) {
             Alert(title: Text("Error"), message: Text(settingViewModel.alertMessage), dismissButton: .cancel(Text("Ok")))
         }

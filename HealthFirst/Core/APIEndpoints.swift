@@ -13,4 +13,5 @@ protocol APIEndpoints {
     var method: HTTPMethod { get }
     var parameter: Parameters? { get }
     var header: HTTPHeaders? { get }
+    var file: MultipartFile? { get }
 }

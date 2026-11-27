@@ -8,4 +8,5 @@
 import Foundation
 protocol SettingRepository {
     func logout(endpoint: APIEndpoints) async throws -> Bool
+    func changedProfileImage(endpoint: APIEndpoints) async throws -> Bool
 }
